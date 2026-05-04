@@ -1,73 +1,77 @@
-# React + TypeScript + Vite
+# Golf App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web app for logging and managing golf rounds. You can start a new round from the UI (stored in Supabase), with pages for home, sign-in, account creation, and profile wired for future work.
 
-Currently, two official plugins are available:
+## Purpose
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Track rounds** — Create round records (course, date, holes, tee time) backed by [Supabase](https://supabase.com).
+- **Grow the product** — Routes exist for login, registration, and profile so you can add authentication and user-specific data next.
 
-## React Compiler
+## Tech stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [React](https://react.dev/) 19 + [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vite.dev/) for dev server and builds
+- [React Router](https://reactrouter.com/) for navigation
+- [Supabase JS client](https://supabase.com/docs/reference/javascript/introduction) for the database API
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- [Node.js](https://nodejs.org/) (LTS recommended; includes `npm`)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Setup
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. **Install dependencies**
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+   ```bash
+   cd golf-project
+   npm install
+   ```
+
+2. **Configure Supabase**
+
+   Create a project in the [Supabase dashboard](https://supabase.com/dashboard), then add a `.env` file in `golf-project` (same folder as `package.json`) with your project URL and anon key:
+
+   ```env
+   VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+   VITE_SUPABASE_ANON_KEY=your_anon_key_here
+   ```
+
+   Vite only exposes variables prefixed with `VITE_` to the browser. Restart the dev server after changing `.env`.
+
+3. **Database (for “Create Round”)**
+
+   The app inserts into a `rounds` table. Ensure a table exists with at least columns matching the insert in `src/services/roundService.ts`, for example:
+
+   - `played_date` (e.g. `date`)
+   - `course_name` (`text`)
+   - `holes_played` (`integer`)
+   - `start_hole` (`integer`)
+   - `tee_time` (`text` or `time`, depending on how you model it)
+
+   Enable Row Level Security and policies that match how you want users to read/write rounds.
+
+## Run locally
+
+```bash
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open the URL shown in the terminal (usually [http://localhost:5173](http://localhost:5173)).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Other commands
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+| Command        | Description                    |
+| -------------- | ------------------------------ |
+| `npm run build` | Typecheck and production build |
+| `npm run preview` | Serve the production build     |
+| `npm run lint`  | Run ESLint                     |
+
+## Routes
+
+| Path             | Page        |
+| ---------------- | ----------- |
+| `/`              | Home        |
+| `/login`         | Login       |
+| `/create-account`| Create account |
+| `/profile`       | Profile     |
+| `/new-round`     | New round (create round in Supabase) |
