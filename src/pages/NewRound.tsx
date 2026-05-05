@@ -1,21 +1,24 @@
 import { createRound } from '../services/roundService';
+import { useNavigate } from 'react-router-dom';
 
 const NewRound = () => {
-    const handleClick = async () => {
-        try {
-            const result = await createRound();
-            console.log('Round created:', result);
-        } catch (error) {
-            console.error('Error creating round:', error);
-        }
+    const navigate = useNavigate();
+
+    const handleCreateRound = async () => {
+        const round = await createRound();
+
+        navigate(`/round/${round.id}`);
     };
 
     return (
-    <div>
-        <h1>New Round Page</h1>
-        <button onClick={handleClick}>Create Round</button>
-    </div>
+        <div>
+            <h1>Start New Round</h1>
+            <button onClick={handleCreateRound}>
+                Create Round
+            </button>
+        </div>
     );
+
 };
 
 export default NewRound;
