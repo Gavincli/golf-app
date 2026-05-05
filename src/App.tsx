@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import CreateAccount from './pages/CreateAccount';
 import Profile from './pages/Profile';
 import NewRound from './pages/NewRound';
+import RoundDetail from './pages/RoundDetail';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
     <Route path="/create-account" element={<CreateAccount />} />
     <Route path="/profile" element={<Profile />} />
     <Route path="/new-round" element={<NewRound />} />
+    <Route path="/round/:id" element={<RoundDetail />} />
   </Routes>
   </BrowserRouter>
   )
