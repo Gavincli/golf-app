@@ -17,6 +17,7 @@
 * [ ] Add par input per hole
 * [ ] Use `holes_played` + `start_hole` from database (not hardcoded)
 * [ ] Improve layout (grid/table instead of vertical stack)
+* [ ] Update the helper text above the input table on `RoundDetail.tsx`
 
 ---
 
@@ -59,3 +60,7 @@
 * [ ] Allow copying previous round setup
 * [ ] Add tee box-based defaults (par 3 vs standard courses)
 * [ ] Consider authentication (`user_id` on rounds)
+
+
+## Command for clearing data (before deployment)
+* TRUNCATE TABLE scores, rounds RESTART IDENTITY CASCADE;
