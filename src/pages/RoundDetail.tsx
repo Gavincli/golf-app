@@ -37,6 +37,7 @@ const RoundDetail = () => {
             // convert strings to numbers safely
             const cleanedScores = scores.map((s) => ({
                 ...s,
+                par: Number(s.par || 0),
                 strokes: Number(s.strokes || 0),
                 putts: Number(s.putts || 0),
                 yardage: Number(s.yardage || 0),
@@ -46,6 +47,22 @@ const RoundDetail = () => {
                 bunker: s.bunker,
             }));
 
+            const hasInvalidScores = cleanedScores.some(
+                (s) =>
+                    s.par < 3 ||
+                    s.par > 6 ||
+                    s.strokes < 1 ||
+                    s.strokes > 15 ||
+                    s.putts < 0 ||
+                    s.putts > 10 ||
+                    s.penalty_strokes < 0 ||
+                    s.penalty_strokes > 10
+            );
+
+            if (hasInvalidScores) {
+                alert('Please enter valid score values.');
+                return;
+            }
             await insertScores(id!, cleanedScores);
 
             alert('Scores saved!');
@@ -64,6 +81,32 @@ const RoundDetail = () => {
         setScores(updated);
         
     };
+
+    const totalPar = scores.reduce(
+        (sum, hole) => sum + Number(hole.par || 0),
+        0
+    );
+
+    const totalStrokes = scores.reduce(
+        (sum, hole) => sum + Number(hole.strokes || 0),
+        0
+    );
+
+    const totalPutts = scores.reduce(
+        (sum, hole) => sum + Number(hole.putts || 0),
+        0
+    );
+
+    //const scoreToPar = totalStrokes - totalPar; //replace to only apply overall score for finished holes
+    const scoreToPar = scores.reduce ((total, hole) => {
+        if (!hole.strokes) return total;
+
+        return (
+            total + 
+            Number(hole.strokes) - 
+            Number(hole.par || 0)
+        );
+    }, 0);
 
     return (
         <div className="rdPage">
@@ -99,6 +142,8 @@ const RoundDetail = () => {
                                             className="rdInput"
                                             type="number"
                                             value={hole.par}
+                                            min={3}
+                                            max={6}
                                             onChange={(e) => {
                                                 const val = e.target.value;
                                                 updateField(index, 'par', val === '' ? '' : Number(val));
@@ -110,6 +155,8 @@ const RoundDetail = () => {
                                         <input
                                             className="rdInput"
                                             type="number"
+                                            min={1}
+                                            max={800}
                                             placeholder="0"
                                             value={hole.yardage}
                                             onChange={(e) => updateField(index, 'yardage', e.target.value)}
@@ -120,6 +167,8 @@ const RoundDetail = () => {
                                         <input
                                             className="rdInput"
                                             type="number"
+                                            min={1}
+                                            max={15}                              
                                             placeholder="0"
                                             value={hole.strokes}
                                             onChange={(e) => updateField(index, 'strokes', e.target.value)}
@@ -130,6 +179,8 @@ const RoundDetail = () => {
                                         <input
                                             className="rdInput"
                                             type="number"
+                                            min={0}
+                                            max={10}
                                             placeholder="0"
                                             value={hole.putts}
                                             onChange={(e) => updateField(index, 'putts', e.target.value)}
@@ -167,6 +218,8 @@ const RoundDetail = () => {
                                         <input
                                             className="rdInput"
                                             type="number"
+                                            min={0}
+                                            max={10}
                                             placeholder="0"
                                             value={hole.penalty_strokes}
                                             onChange={(e) => updateField(index, 'penalty_strokes', e.target.value)}
@@ -176,6 +229,20 @@ const RoundDetail = () => {
                             ))}
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <div className="rdTotals">
+                <div>Total Par: {totalPar}</div>
+                <div>Total Strokes: {totalStrokes}</div>
+                <div>Total Putts: {totalPutts}</div>
+                <div>
+                    Score: {' '}
+                    {scoreToPar === 0
+                    ? 'E'
+                    : scoreToPar > 0
+                    ? `+${scoreToPar}`
+                    : scoreToPar}
                 </div>
             </div>
 

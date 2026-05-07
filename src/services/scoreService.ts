@@ -12,6 +12,8 @@ type ScoreInput = {
     yardage?: number;
 };
 
+
+
 export const insertScores = async (
     roundId: string,
     scores: ScoreInput[]
